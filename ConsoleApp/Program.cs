@@ -4,6 +4,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ConsoleApp
 {
@@ -26,6 +29,7 @@ namespace ConsoleApp
                     .WithUrl(hubConnUrl, transports: (HttpTransportType.LongPolling | HttpTransportType.ServerSentEvents) & ~HttpTransportType.WebSockets,
                     (opts) =>
                     {
+                        opts.CloseTimeout = TimeSpan.FromHours(1);
                         opts.HttpMessageHandlerFactory = (message) =>
                         {
                             if (message is HttpClientHandler clientHandler)
@@ -35,6 +39,11 @@ namespace ConsoleApp
                             return message;
                         };
                     })
+                    .ConfigureLogging(logging => {
+                        logging.SetMinimumLevel(LogLevel.Trace);
+                    })
+                    .AddJsonProtocol(opt =>
+                        opt.PayloadSerializerOptions.PropertyNamingPolicy = null)
                     .WithAutomaticReconnect()
                     .Build();
 
