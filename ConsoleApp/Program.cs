@@ -26,7 +26,7 @@ namespace ConsoleApp
                 
                 Console.WriteLine($"Build hub connection {hubConnUrl}");
                 var conn = new HubConnectionBuilder()
-                    .WithUrl(hubConnUrl, transports: (HttpTransportType.LongPolling | HttpTransportType.ServerSentEvents) & ~HttpTransportType.WebSockets,
+                    .WithUrl(hubConnUrl, transports: HttpTransportType.LongPolling | HttpTransportType.WebSockets,
                     (opts) =>
                     {
                         opts.CloseTimeout = TimeSpan.FromHours(1);
